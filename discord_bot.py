@@ -84,9 +84,22 @@ async def random(ctx, domain=None):
     # Debug message
     await invoqued_by(ctx, 'Ping')
 
+    # Find if its a suitable domain
+    if domain:
+        for domain_from_list in list_of_domains:
+            if domain_from_list['short'] == domain:
+
+                domain_name = domain_from_list["name"]
+                domain_short = domain_from_list['short']
+                domain_random_id = randrange(domain_from_list["max_count"])
+                break
+
     # Choose random domain
-    if not domain:
-        domain = choice(domains)
+    else:
+        domain = choice(list_of_domains)
+        domain_name = domain["name"]
+        domain_short = domain["short"]
+        domain_random_id = randrange(domain["max_count"])
 
     # Send typing message
     # await ctx.channel.trigger_typing()
@@ -94,7 +107,7 @@ async def random(ctx, domain=None):
     # Fetch data
     try:
         data = requests.get(
-            f'{API_URL}/{domain["short"]}/single-post/?id={randrange(domain["max_count"])}&corsProxy=false').json()
+            f'{API_URL}/{domain_short}/single-post/?id={domain_random_id}&corsProxy=false').json()
 
     except Exception as error:
         print(f'Fetch:\n{error}')
@@ -107,8 +120,9 @@ async def random(ctx, domain=None):
     try:
         image = data[0]["low_res_file"]
     except:
-        print('lol')
         image = data[0]["high_res_file"]
+
+        debug_print('Failed to retrieve low res file')
 
     # Send message
     try:
@@ -122,7 +136,7 @@ async def random(ctx, domain=None):
         embed.set_image(url=image)
 
         # Credit
-        embed.set_footer(text=f'- {domain["name"]}')
+        embed.set_footer(text=f'- {domain_name}')
 
         # Send response
         message = await ctx.send(embed=embed)
