@@ -50,11 +50,19 @@ async def on_ready():
 
 @bot.command()
 async def say(ctx, arg):
+
+    # Debug message
+    await invoqued_by(ctx, 'Ping')
+
     await ctx.send(arg)
 
 
 @bot.command()
 async def ping(ctx):
+
+    # Debug message
+    await invoqued_by(ctx, 'Ping')
+
     time1 = time.perf_counter()
 
     # Send typing message as a method to test ping
@@ -73,7 +81,8 @@ async def ping(ctx):
 @bot.command(aliases=['r', 'rand'])
 async def random(ctx, domain=None):
 
-    debug_print(f'Random: invoqued by {ctx.author.name}')
+    # Debug message
+    await invoqued_by(ctx, 'Ping')
 
     # Choose random domain
     if not domain:
