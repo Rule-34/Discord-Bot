@@ -1,5 +1,5 @@
 import os
-import json
+import time
 from random import choice, randrange
 # Third party
 import requests
@@ -45,9 +45,6 @@ async def on_ready():
     # channel = client.get_channel(message_channel_id)  # Sauce
     # message = await channel.send('Found some hot sauce\nhttps://twitter.com/Rule34App/status/1223380540923023360?s=20')
 
-    # Add reaction
-    # await message.add_reaction('🥵')
-
 
 # -------- BOT COMMANDS -------- #
 
@@ -77,39 +74,54 @@ async def random(ctx, domain=None):
     if not domain:
         domain = choice(domains)
 
-        # Fetch data
-        try:
-            data = requests.get(
-                f'{API_URL}/{domain["short"]}/single-post/?id={randrange(domain["max_count"])}&corsProxy=false').json()
+    # Send typing message
+    # await ctx.channel.trigger_typing()
 
-        except Exception as error:
-            print(f'Fetch:\n{error}')
+    # Fetch data
+    try:
+        data = requests.get(
+            f'{API_URL}/{domain["short"]}/single-post/?id={randrange(domain["max_count"])}&corsProxy=false').json()
 
-            await send_error(ctx, error_title="Couldnt get image")
+    except Exception as error:
+        print(f'Fetch:\n{error}')
 
-            return
+        await send_error(ctx, error_title="Could not fetch image")
 
-        # Send message
-        try:
-            embed = discord.Embed()
-            embed.add_field(
-                name="Mention", value=f"Hentai for {ctx.author.name}")
-            # Set image
-            embed.set_image(url=data[0]["high_res_file"])
-            # Credit
-            embed.set_footer(text=f'- {domain["name"]}')
+        return
 
-            # Send response
-            await ctx.send(embed=embed)
+    # Try to use low res image
+    try:
+        image = data[0]["low_res_file"]
+    except:
+        print('lol')
+        image = data[0]["high_res_file"]
+
+    # Send message
+    try:
+        # Create embed
+        embed = discord.Embed()
+
+        embed.add_field(
+            name="Mention", value=f"Hentai for {ctx.author.mention}")
+
+        # Set image
+        embed.set_image(url=image)
+
+        # Credit
+        embed.set_footer(text=f'- {domain["name"]}')
+
+        # Send response
+        message = await ctx.send(embed=embed)
+
         # Add reaction
         await message.add_reaction('🥵')
 
-        except Exception as error:
-            print(f'Send:\n{error}')
+    except Exception as error:
+        print(f'Send:\n{error}')
 
-            await send_error(ctx, error_title="Couldnt send image")
+        await send_error(ctx, error_title="Could not reply with an image")
 
-            return
+        return
 
 
 # -------- BOT INIT -------- #
