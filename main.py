@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from os import path, remove
 
 # Own
-from helper import debug_print, log_to_file
+from helper import debug_print
 import discord_bot
 
 # Define variables
@@ -26,13 +26,6 @@ def main():
     # check for --version or -V
     if args.version:
         print("Discord Bot %s" % version)
-
-    # Remove logfile if it exists
-    if path.exists("log.txt"):
-        debug_print("log.txt file found, removing it\n")
-        remove("log.txt")
-    else:
-        debug_print("log.txt file not found, creating it\n")
 
     # Execute bot
     discord_bot.init()
