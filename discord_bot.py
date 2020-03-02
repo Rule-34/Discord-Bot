@@ -47,24 +47,6 @@ async def on_ready():
     # Set status
     await bot.change_presence(activity=discord.Game(name='-help'))
 
-    # Send message
-    # channel = client.get_channel(message_channel_id)  # Sauce
-    # message = await channel.send('Found some hot sauce\nhttps://twitter.com/Rule34App/status/1223380540923023360?s=20')
-
-
-# -------- BOT COMMANDS -------- #
-
-# @bot.command(aliases=['h'])
-# async def help(ctx):
-#     await ctx.send(
-#         f'''Command prefix "**{r34_bot_prefix}**"
-
-#     **Available commands**
-#     help - Shows this text
-#     random <domain> - Shows a random image from
-
-#     ''')
-
 
 @bot.command()
 async def say(ctx, arg):
