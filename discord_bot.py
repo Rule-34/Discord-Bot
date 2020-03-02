@@ -24,6 +24,20 @@ list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
 
 # -------- Helper functions -------- #
 
+async def fetch_api(ctx, domain, id):
+    try:
+        data = requests.get(
+            f'{API_URL}/{domain}/single-post/?id={id}&corsProxy=false').json()
+
+        return data
+
+    except Exception as error:
+        print(f'Fetch error:\n{error}')
+
+
+        return
+
+
 async def send_error(ctx, error_title='Error', error_data=None):
     embed = discord.Embed(title=error_title)
     embed.add_field(
@@ -105,16 +119,7 @@ async def random(ctx, domain=None):
     # await ctx.channel.trigger_typing()
 
     # Fetch data
-    try:
-        data = requests.get(
-            f'{API_URL}/{domain_short}/single-post/?id={domain_random_id}&corsProxy=false').json()
-
-    except Exception as error:
-        print(f'Fetch:\n{error}')
-
-        await send_error(ctx, error_title="Could not fetch image")
-
-        return
+    data = await fetch_api(ctx, domain_short, domain_random_id)
 
     # Try to use low res image
     try:
