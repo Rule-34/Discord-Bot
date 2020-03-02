@@ -6,7 +6,7 @@ from helper import debug_print
 import discord_bot
 
 # Define variables
-version = 0.1
+version = 0.2
 
 
 # Start
