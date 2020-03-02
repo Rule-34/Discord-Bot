@@ -13,22 +13,28 @@ from config import discord_token, API_URL, r34_bot_prefix, message_channel_id
 bot = commands.Bot(command_prefix=r34_bot_prefix,
                    description="Rule 34 Bot - Seeker of sauce")
 
-domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
-           {'name': 'rule34.paheal.net', 'short': 'paheal', 'max_count': 3532797},
-           {'name': 'danbooru.donmai.us', 'short': 'danbooru', 'max_count': 3806415},
-           {'name': 'gelbooru.com', 'short': 'gelbooru', 'max_count': 5164061},
-           {'name': 'e621.net', 'short': 'e621', 'max_count': 2168016}]
+list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
+                   {'name': 'rule34.paheal.net',
+                       'short': 'paheal', 'max_count': 3532797},
+                   {'name': 'danbooru.donmai.us',
+                       'short': 'danbooru', 'max_count': 3806415},
+                   {'name': 'gelbooru.com', 'short': 'gelbooru', 'max_count': 5164061},
+                   {'name': 'e621.net', 'short': 'e621', 'max_count': 2168016}]
 
 
 # -------- Helper functions -------- #
 
-async def send_error(ctx, error_title='An error happened', error_data=None):
+async def send_error(ctx, error_title='Error', error_data=None):
     embed = discord.Embed(title=error_title)
     embed.add_field(
-        name="error", value=error_data, inline=False)
+        name="Message", value=error_data, inline=False)
 
     # Send response
     await ctx.send(embed=embed)
+
+
+async def invoqued_by(ctx, command=None):
+    debug_print(f'{command}: invoqued by {ctx.author.name}')
 
 
 # -------- BOT EVENTS -------- #
