@@ -101,6 +101,8 @@ async def random(ctx, domain=None):
 
             # Send response
             await ctx.send(embed=embed)
+        # Add reaction
+        await message.add_reaction('🥵')
 
         except Exception as error:
             print(f'Send:\n{error}')
