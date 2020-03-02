@@ -65,6 +65,23 @@ async def say(ctx, arg):
     await ctx.send(arg)
 
 
+@bot.command()
+async def ping(ctx):
+    time1 = time.perf_counter()
+
+    # Send typing message as a method to test ping
+    await ctx.channel.trigger_typing()
+
+    time2 = time.perf_counter()
+
+    # Build embed
+    embed = discord.Embed(
+        title="Pong!", description=f'It took {round((time2-time1)*1000)}ms')
+
+    # Send message
+    await ctx.send(embed=embed)
+
+
 @bot.command(aliases=['r', 'rand'])
 async def random(ctx, domain=None):
 
