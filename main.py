@@ -25,7 +25,8 @@ def main():
 
     # check for --version or -V
     if args.version:
-        print("Discord Bot %s" % version)
+        print(f"Discord Bot {version}")
+        return
 
     # Execute bot
     discord_bot.init()
