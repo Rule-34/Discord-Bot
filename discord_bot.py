@@ -13,6 +13,7 @@ from config import discord_token, API_URL, r34_bot_prefix, message_channel_id
 bot = commands.Bot(command_prefix=r34_bot_prefix,
                    description="Rule 34 Bot - Seeker of sauce")
 
+# Hardcoded max_count, would probably need to use a fetch
 list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
                    {'name': 'rule34.paheal.net',
                        'short': 'paheal', 'max_count': 3532797},
@@ -73,7 +74,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name='-help'))
 
 
-@bot.command()
+@bot.command(brief="Echoes a message")
 async def say(ctx, arg):
 
     # Debug message
@@ -82,7 +83,7 @@ async def say(ctx, arg):
     await ctx.send(arg)
 
 
-@bot.command()
+@bot.command(brief="Outputs latency", description="Calculates latency of the bot connection")
 async def ping(ctx):
 
     # Debug message
@@ -103,7 +104,7 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command(aliases=['r', 'rand'])
+@bot.command(aliases=['rand', 'r'], brief="Outputs random hentai from a random domain", description="Outputs random hentai from a domain, random if none selected")
 async def random(ctx, domain=None):
 
     # Debug message
