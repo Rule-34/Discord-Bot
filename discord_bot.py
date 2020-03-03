@@ -2,7 +2,7 @@ import os
 import time
 from random import choice, randrange
 # Third party
-import requests
+import aiohttp
 import discord
 from discord.ext import commands
 # Own
@@ -24,12 +24,22 @@ list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
 
 # -------- Helper functions -------- #
 
-async def fetch_api(ctx, domain, id):
-    try:
-        data = requests.get(
-            f'{API_URL}/{domain}/single-post/?id={id}&corsProxy=false').json()
+async def fetch_api(ctx, domain: str, id: int):
 
-        return data
+    # Craft URL
+    url = f'{API_URL}/{domain}/single-post/?id={id}&corsProxy=false'
+
+    try:
+        # Fetch data and return it
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as request:
+                if request.status == 200:
+                    json = await request.json()
+
+                    return json
+
+                else:
+                    raise ConnectionError('Request status was not correct')
 
     except Exception as error:
         print(f'Fetch error:\n{error}')
