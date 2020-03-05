@@ -17,14 +17,14 @@ bot = commands.Bot(command_prefix=r34_bot_prefix,
 # -------- Helper functions -------- #
 
 
-async def domain_selector(channel, domain=None):
+async def domain_selector(channel, domain=None, selector='short'):
     # Find if its a suitable domain
     if domain:
         for domain_from_list in list_of_domains:
-            if domain_from_list['short'] == domain:
+            if domain_from_list[selector] == domain:
 
                 domain_name = domain_from_list["name"]
-                domain_short = domain_from_list['short']
+                domain_short = domain_from_list["short"]
                 domain_random_id = randrange(domain_from_list["max_count"])
 
                 return domain_name, domain_short, domain_random_id
@@ -100,7 +100,6 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
 
         # Set domain ID
         embed.colour = domain_random_id
-        print(domain_random_id)
 
         # Credit
         embed.set_footer(text=f'- {domain_name}')
@@ -167,7 +166,17 @@ async def on_reaction_add(reaction, user):
         _domain_name = reaction.message.embeds[0].footer.text[2:]
         _domain_random_id = reaction.message.embeds[0].colour.value
 
-        await reaction.message.channel.send(_domain_name)
+        # Learn short from name
+        _domain_short = await domain_selector(reaction.message.channel, _domain_name, 'name')
+
+        # Fetch data
+        api_request = await fetch_api(reaction.message.channel, _domain_short[1], _domain_random_id)
+
+        # Send data
+        if api_request[0]['source']:
+            await reaction.message.channel.send(api_request[0]['source'])
+        else:
+            await reaction.message.channel.send('No source available, sorry!')
 
     elif str(reaction.emoji) == '➕':
 
