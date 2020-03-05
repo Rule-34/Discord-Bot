@@ -61,9 +61,13 @@ async def fetch_api(channel, domain, id):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as request:
                 if request.status == 200:
-                    json = await request.json()
+                    api_request = await request.json()
 
-                    return json
+                    # Error handling
+                    if not api_request:
+                        raise ConnectionError('No data received')
+
+                    return api_request
 
                 else:
                     raise ConnectionError('Request status was not correct')
