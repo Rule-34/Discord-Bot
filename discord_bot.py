@@ -45,7 +45,7 @@ async def fetch_api(ctx, domain: str, id: int):
     except Exception as error:
         print(f'Fetch error:\n{error}')
 
-        await send_error(ctx, error_data="Could not fetch image")
+        await send_error(ctx, error_data=f"Could not fetch data\n{error}")
 
         return
 
@@ -164,7 +164,7 @@ async def random(ctx, domain=None):
     except Exception as error:
         print(f'Send error:\n{error}\n{embed.image.url, image}')
 
-        await send_error(ctx, error_data="Could not reply with an image")
+        await send_error(ctx, error_data=f"Could not reply with an image\n{error}")
 
         return
 
