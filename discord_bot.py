@@ -25,7 +25,33 @@ list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
 
 # -------- Helper functions -------- #
 
-async def fetch_api(ctx, domain: str, id: int):
+
+async def domain_selector(channel, domain=None):
+    # Find if its a suitable domain
+    if domain:
+        for domain_from_list in list_of_domains:
+            if domain_from_list['short'] == domain:
+
+                domain_name = domain_from_list["name"]
+                domain_short = domain_from_list['short']
+                domain_random_id = randrange(domain_from_list["max_count"])
+
+                return domain_name, domain_short, domain_random_id
+
+        # If for ends execution empty then send error
+        await send_error(channel, error_data="Not a valid domain")
+
+    # Choose random domain
+    else:
+        domain = choice(list_of_domains)
+        domain_name = domain["name"]
+        domain_short = domain["short"]
+        domain_random_id = randrange(domain["max_count"])
+
+        return domain_name, domain_short, domain_random_id
+
+
+async def fetch_api(channel, domain, id):
 
     # Craft URL
     url = f'{API_URL}/{domain}/single-post/?id={id}&corsProxy=false'
@@ -110,25 +136,8 @@ async def random(ctx, domain=None):
     # Debug message
     await invoqued_by(ctx, 'Random')
 
-    # Find if its a suitable domain
-    if domain:
-        for domain_from_list in list_of_domains:
-            if domain_from_list['short'] == domain:
-
-                domain_name = domain_from_list["name"]
-                domain_short = domain_from_list['short']
-                domain_random_id = randrange(domain_from_list["max_count"])
-                break
-
-    # Choose random domain
-    else:
-        domain = choice(list_of_domains)
-        domain_name = domain["name"]
-        domain_short = domain["short"]
-        domain_random_id = randrange(domain["max_count"])
-
-    # Send typing message
-    # await ctx.channel.trigger_typing()
+    # Select domain
+    domain_name, domain_short, domain_random_id = await domain_selector(ctx.channel, domain)
 
     # Fetch data
     data = await fetch_api(ctx, domain_short, domain_random_id)
