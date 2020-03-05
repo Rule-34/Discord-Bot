@@ -136,6 +136,9 @@ async def random(ctx, domain=None):
     # Try to use low res image
     try:
         image = data[0]["low_res_file"]
+
+        if image == 'undefined':
+            raise ValueError('Image was undefined')
     except:
         image = data[0]["high_res_file"]
 
