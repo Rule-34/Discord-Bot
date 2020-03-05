@@ -160,6 +160,7 @@ async def on_reaction_add(reaction, user):
     await invoqued_by(user, 'Reaction')
     # print(f'{reaction} - {user}\n{reaction.message}')
 
+    # Show source
     if str(reaction.emoji) == '🌶':
 
         # Get variables
@@ -172,12 +173,21 @@ async def on_reaction_add(reaction, user):
         # Fetch data
         api_request = await fetch_api(reaction.message.channel, _domain_short[1], _domain_random_id)
 
-        # Send data
         if api_request[0]['source']:
-            await reaction.message.channel.send(api_request[0]['source'])
-        else:
-            await reaction.message.channel.send('No source available, sorry!')
+            _source = api_request[0]['source']
 
+        else:
+            _source = 'No source available, sorry!'
+
+        # Create embed and send it
+        embed = discord.Embed()
+
+        embed.add_field(
+            name="Source", value=_source)
+
+        await reaction.message.channel.send(embed=embed)
+
+    # Show more hentai
     elif str(reaction.emoji) == '➕':
 
         # Select domain
