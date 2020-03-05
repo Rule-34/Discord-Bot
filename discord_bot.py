@@ -130,17 +130,17 @@ async def send_embed(ctx, api_request, domain_name):
         return
 
 
-async def send_error(ctx, error_title='Error', error_data=None):
+async def send_error(channel, error_title='Error', error_data=None):
     embed = discord.Embed(title=error_title)
     embed.add_field(
         name="Message", value=error_data, inline=False)
 
     # Send response
-    await ctx.send(embed=embed)
+    await channel.send(embed=embed)
 
 
-async def invoqued_by(ctx, command=None):
-    debug_print(f'{command}: invoqued by {ctx.author.name}')
+async def invoqued_by(name, command=None):
+    debug_print(f'{command}: invoqued by {name}')
 
 
 # -------- BOT EVENTS -------- #
@@ -158,7 +158,7 @@ async def on_ready():
 async def say(ctx, arg):
 
     # Debug message
-    await invoqued_by(ctx, 'Say')
+    await invoqued_by(ctx.author.name, 'Say')
 
     await ctx.send(arg)
 
@@ -167,7 +167,7 @@ async def say(ctx, arg):
 async def ping(ctx):
 
     # Debug message
-    await invoqued_by(ctx, 'Ping')
+    await invoqued_by(ctx.author.name, 'Ping')
 
     time1 = time.perf_counter()
 
@@ -188,21 +188,12 @@ async def ping(ctx):
 async def random(ctx, domain=None):
 
     # Debug message
-    await invoqued_by(ctx, 'Random')
+    await invoqued_by(ctx.author.name, 'Random')
 
     # Select domain
     domain_name, domain_short, domain_random_id = await domain_selector(ctx.channel, domain)
 
     # Fetch data
-    data = await fetch_api(ctx, domain_short, domain_random_id)
-
-    # Try to use low res image
-    try:
-        image = data[0]["low_res_file"]
-
-    except:
-        debug_print('Failed to retrieve low res file')
-        image = data[0]["high_res_file"]
 
     # Send embed
     await send_embed(ctx, api_request, domain_name)
