@@ -71,7 +71,7 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
     # Set status
-    await bot.change_presence(activity=discord.Game(name='-help'))
+    await bot.change_presence(activity=discord.Game(name=f'r34.app | {r34_bot_prefix}help'))
 
 
 @bot.command(brief="Echoes a message")
