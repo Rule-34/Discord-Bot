@@ -78,7 +78,7 @@ async def on_ready():
 async def say(ctx, arg):
 
     # Debug message
-    await invoqued_by(ctx, 'Ping')
+    await invoqued_by(ctx, 'Say')
 
     await ctx.send(arg)
 
@@ -108,7 +108,7 @@ async def ping(ctx):
 async def random(ctx, domain=None):
 
     # Debug message
-    await invoqued_by(ctx, 'Ping')
+    await invoqued_by(ctx, 'Random')
 
     # Find if its a suitable domain
     if domain:
