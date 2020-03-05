@@ -154,6 +154,34 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f'r34.app | {r34_bot_prefix}help'))
 
 
+@bot.event
+async def on_reaction_add(reaction, user):
+    # Skip messages from the bot
+    if user == bot.user:
+        return
+    # Skip messages from other bots
+    if not reaction.message.author == bot.user:
+        return
+
+    await invoqued_by(user, 'Reaction')
+    # print(f'{reaction} - {user}\n{reaction.message}')
+
+    if str(reaction.emoji) == '🌶':
+
+        await reaction.message.channel.send('lol')
+
+    elif str(reaction.emoji) == '➕':
+
+        # Select domain
+        domain_name, domain_short, domain_random_id = await domain_selector(reaction.message.channel)
+
+        # Fetch data
+        api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
+
+        # Send embed
+        await send_embed(reaction.message, api_request, domain_name)
+
+
 @bot.command(brief="Echoes a message")
 async def say(ctx, arg):
 
@@ -194,6 +222,7 @@ async def random(ctx, domain=None):
     domain_name, domain_short, domain_random_id = await domain_selector(ctx.channel, domain)
 
     # Fetch data
+    api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
 
     # Send embed
     await send_embed(ctx, api_request, domain_name)
