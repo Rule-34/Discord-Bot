@@ -6,21 +6,12 @@ import aiohttp
 import discord
 from discord.ext import commands
 # Own
-from helper import debug_print
+from helper import debug_print, list_of_domains
 from config import discord_token, API_URL, r34_bot_prefix, message_channel_id
 
 # Init
 bot = commands.Bot(command_prefix=r34_bot_prefix,
                    description="Rule 34 Bot - Seeker of sauce")
-
-# Hardcoded max_count, would probably need to use a fetch
-list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
-                   {'name': 'rule34.paheal.net',
-                       'short': 'paheal', 'max_count': 3532797},
-                   {'name': 'danbooru.donmai.us',
-                       'short': 'danbooru', 'max_count': 3806415},
-                   {'name': 'gelbooru.com', 'short': 'gelbooru', 'max_count': 5164061},
-                   {'name': 'e621.net', 'short': 'e621', 'max_count': 2168016}]
 
 
 # -------- Helper functions -------- #
