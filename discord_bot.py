@@ -137,12 +137,15 @@ async def random(ctx, domain=None):
     try:
         image = data[0]["low_res_file"]
 
-        if image == 'undefined':
-            raise ValueError('Image was undefined')
     except:
+        debug_print('Failed to retrieve low res file')
         image = data[0]["high_res_file"]
 
-        debug_print('Failed to retrieve low res file')
+    # Test if image is not undefined
+    if not 'https://' in image:
+        await send_error(ctx, error_data=f"Image didn't have a valid url\n{image}")
+
+        return
 
     # Send message
     try:
