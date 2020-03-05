@@ -71,7 +71,57 @@ async def fetch_api(channel, domain, id):
     except Exception as error:
         print(f'Fetch error:\n{error}')
 
-        await send_error(ctx, error_data=f"Could not fetch data\n{error}")
+        await send_error(channel, error_data=f"Could not fetch data\n{error}")
+
+        return
+
+
+async def send_embed(ctx, api_request, domain_name):
+
+    # Try to use low res image
+    try:
+        image = api_request[0]["low_res_file"]
+
+    except:
+        debug_print('Failed to retrieve low res file')
+        image = api_request[0]["high_res_file"]
+
+    # Test if image is not undefined
+    if not 'https://' in image:
+        await send_error(ctx.channel, error_data=f"Image didn't have a valid url\n{image}")
+
+        return
+
+    # Send message
+    try:
+        # Create embed
+        embed = discord.Embed()
+
+        embed.add_field(
+            name="Mention", value=f"Hentai for {ctx.author.mention}")
+
+        # Set image
+        embed.set_image(url=image)
+
+        # Credit
+        embed.set_footer(text=f'- {domain_name}')
+
+        # Send response
+        message = await ctx.channel.send(embed=embed)
+
+        # Add "hot" reaction
+        await message.add_reaction('🥵')
+
+        # Add "source" reaction
+        await message.add_reaction('🌶')
+
+        # Add "give me more" reaction
+        await message.add_reaction('➕')
+
+    except Exception as error:
+        print(f'Send error:\n{error}\n{embed.image.url, image}')
+
+        await send_error(ctx.channel, error_data=f"Could not reply with an image\n{error}")
 
         return
 
@@ -150,38 +200,8 @@ async def random(ctx, domain=None):
         debug_print('Failed to retrieve low res file')
         image = data[0]["high_res_file"]
 
-    # Test if image is not undefined
-    if not 'https://' in image:
-        await send_error(ctx, error_data=f"Image didn't have a valid url\n{image}")
-
-        return
-
-    # Send message
-    try:
-        # Create embed
-        embed = discord.Embed()
-
-        embed.add_field(
-            name="Mention", value=f"Hentai for {ctx.author.mention}")
-
-        # Set image
-        embed.set_image(url=image)
-
-        # Credit
-        embed.set_footer(text=f'- {domain_name}')
-
-        # Send response
-        message = await ctx.send(embed=embed)
-
-        # Add reaction
-        await message.add_reaction('🥵')
-
-    except Exception as error:
-        print(f'Send error:\n{error}\n{embed.image.url, image}')
-
-        await send_error(ctx, error_data=f"Could not reply with an image\n{error}")
-
-        return
+    # Send embed
+    await send_embed(ctx, api_request, domain_name)
 
 
 # -------- BOT INIT -------- #
