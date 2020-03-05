@@ -71,7 +71,7 @@ async def fetch_api(channel, domain, id):
         return
 
 
-async def send_embed(ctx, api_request, domain_name):
+async def send_embed(ctx, api_request, domain_name, domain_random_id):
 
     # Try to use low res image
     try:
@@ -97,6 +97,10 @@ async def send_embed(ctx, api_request, domain_name):
 
         # Set image
         embed.set_image(url=image)
+
+        # Set domain ID
+        embed.colour = domain_random_id
+        print(domain_random_id)
 
         # Credit
         embed.set_footer(text=f'- {domain_name}')
@@ -159,7 +163,11 @@ async def on_reaction_add(reaction, user):
 
     if str(reaction.emoji) == '🌶':
 
-        await reaction.message.channel.send('lol')
+        # Get variables
+        _domain_name = reaction.message.embeds[0].footer.text[2:]
+        _domain_random_id = reaction.message.embeds[0].colour.value
+
+        await reaction.message.channel.send(_domain_name)
 
     elif str(reaction.emoji) == '➕':
 
@@ -170,7 +178,7 @@ async def on_reaction_add(reaction, user):
         api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
 
         # Send embed
-        await send_embed(reaction.message, api_request, domain_name)
+        await send_embed(reaction.message, api_request, domain_name, domain_random_id)
 
 
 @bot.command(brief="Echoes a message")
@@ -216,7 +224,7 @@ async def random(ctx, domain=None):
     api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
 
     # Send embed
-    await send_embed(ctx, api_request, domain_name)
+    await send_embed(ctx, api_request, domain_name, domain_random_id)
 
 
 # -------- BOT INIT -------- #
