@@ -1,0 +1,35 @@
+{
+  "name": "rule-34-discord-bot",
+  "version": "1.0.0",
+  "description": "Bot made in python",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -q index.js",
+    "dev": "cross-env NODE_ENV=development DEBUG=*,-nodemon* npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VoidlessSeven7/Rule-34-Discord-Bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VoidlessSeven7/Rule-34-Discord-Bot/issues"
+  },
+  "homepage": "https://github.com/VoidlessSeven7/Rule-34-Discord-Bot#readme",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "discord.js": "^12.0.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1"
+  }
+}
