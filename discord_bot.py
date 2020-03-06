@@ -72,7 +72,7 @@ async def fetch_api(channel, domain, id):
         return
 
 
-async def send_embed(ctx, api_request, domain_name, domain_random_id):
+async def send_embed(channel, mention, api_request, domain_name, domain_random_id):
 
     # Try to use low res image
     try:
@@ -84,7 +84,7 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
 
     # Test if image is not undefined
     if not 'https://' in image:
-        await send_error(ctx.channel, error_data=f"Image didn't have a valid url\n{image}")
+        await send_error(channel, error_data=f"Image didn't have a valid url\n{image}")
 
         return
 
@@ -94,7 +94,7 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
         embed = discord.Embed()
 
         embed.add_field(
-            name="Mention", value=f"Hentai for {ctx.author.mention}")
+            name="Mention", value=f"Hentai for {mention}")
 
         # Set image
         embed.set_image(url=image)
@@ -106,7 +106,7 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
         embed.set_footer(text=f'- {domain_name}')
 
         # Send response
-        message = await ctx.channel.send(embed=embed)
+        message = await channel.send(embed=embed)
 
         # Add "hot" reaction
         # await message.add_reaction('🥵')
@@ -120,7 +120,7 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
     except Exception as error:
         print(f'Send error:\n{error}\n{embed.image.url, image}')
 
-        await send_error(ctx.channel, error_data=f"Could not reply with an image\n{error}")
+        await send_error(channel, error_data=f"Could not reply with an image\n{error}")
 
         return
 
@@ -198,7 +198,7 @@ async def on_reaction_add(reaction, user):
         api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
 
         # Send embed
-        await send_embed(reaction.message, api_request, domain_name, domain_random_id)
+        await send_embed(reaction.message.channel, user.mention, api_request, domain_name, domain_random_id)
 
 
 @bot.command(brief="Echoes a message")
@@ -244,7 +244,7 @@ async def random(ctx, domain=None):
     api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
 
     # Send embed
-    await send_embed(ctx, api_request, domain_name, domain_random_id)
+    await send_embed(ctx.channel, ctx.author.mention, api_request, domain_name, domain_random_id)
 
 
 # -------- BOT INIT -------- #
