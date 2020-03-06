@@ -69,7 +69,7 @@ async def fetch_api(channel, domain, id):
 
         await send_error(channel, error_data=f"Could not fetch data\n{error}")
 
-        return
+        return None
 
 
 async def send_embed(channel, mention, api_request, domain_name, domain_random_id):
@@ -197,6 +197,9 @@ async def on_reaction_add(reaction, user):
         # Fetch data
         api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
 
+        if not api_request:
+            return
+
         # Send embed
         await send_embed(reaction.message.channel, user.mention, api_request, domain_name, domain_random_id)
 
@@ -242,6 +245,9 @@ async def random(ctx, domain=None):
 
     # Fetch data
     api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
+
+    if not api_request:
+        return
 
     # Send embed
     await send_embed(ctx.channel, ctx.author.mention, api_request, domain_name, domain_random_id)
