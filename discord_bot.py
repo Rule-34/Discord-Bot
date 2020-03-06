@@ -134,10 +134,6 @@ async def send_error(channel, error_title='Error', error_data=None):
     await channel.send(embed=embed)
 
 
-async def invoqued_by(name, command=None):
-    debug_print(f'{command}: invoqued by {name}')
-
-
 # -------- BOT EVENTS -------- #
 
 @bot.event
