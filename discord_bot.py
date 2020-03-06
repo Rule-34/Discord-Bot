@@ -83,7 +83,7 @@ async def send_embed(channel, mention, api_request, domain_name, domain_random_i
         image = api_request[0]["high_res_file"]
 
     # Test if image is not undefined
-    if not 'https://' in image:
+    if not image.startswith('http'):
         await send_error(channel, error_data=f"Image didn't have a valid url\n{image}")
 
         return
