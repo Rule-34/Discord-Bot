@@ -20,24 +20,25 @@ bot = commands.Bot(command_prefix=r34_bot_prefix,
 async def domain_selector(channel, domain=None, selector='short'):
     # Find if its a suitable domain
     if domain:
-        for domain_from_list in list_of_domains:
-            if domain_from_list[selector] == domain:
+        domain_dic = [
+            domain_from_list for domain_from_list in list_of_domains if domain_from_list[selector] == domain]
 
-                domain_name = domain_from_list["name"]
-                domain_short = domain_from_list["short"]
-                domain_random_id = randrange(domain_from_list["max_count"])
+        domain_name = domain_dic["name"]
+        domain_short = domain_dic["short"]
+        domain_random_id = randrange(domain_dic["max_count"])
 
-                return domain_name, domain_short, domain_random_id
+        if domain_dic:
+            return domain_name, domain_short, domain_random_id
 
         # If for ends execution empty then send error
         await send_error(channel, error_data="Not a valid domain")
 
     # Choose random domain
     else:
-        domain = choice(list_of_domains)
-        domain_name = domain["name"]
-        domain_short = domain["short"]
-        domain_random_id = randrange(domain["max_count"])
+        domain_dic = choice(list_of_domains)
+        domain_name = domain_dic["name"]
+        domain_short = domain_dic["short"]
+        domain_random_id = randrange(domain_dic["max_count"])
 
         return domain_name, domain_short, domain_random_id
 
