@@ -76,11 +76,11 @@ async def send_embed(channel, mention, api_request, domain_name, domain_random_i
 
     # Try to use low res image
     try:
-        image = api_request[0]["low_res_file"]
+        image = list(api_request)[0]["low_res_file"]
 
     except:
         debug_print('Failed to retrieve low res file')
-        image = api_request[0]["high_res_file"]
+        image = list(api_request)[0]["high_res_file"]
 
     # Test if image is not undefined
     if not image.startswith('http'):
@@ -174,8 +174,8 @@ async def on_reaction_add(reaction, user):
         # Fetch data
         api_request = await fetch_api(reaction.message.channel, _domain_short[1], _domain_random_id)
 
-        if api_request[0]['source']:
-            _source = api_request[0]['source']
+        if list(api_request)[0]['source']:
+            _source = list(api_request)[0]['source']
 
         else:
             _source = 'No source available, sorry!'
