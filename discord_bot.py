@@ -108,7 +108,7 @@ async def send_embed(ctx, api_request, domain_name, domain_random_id):
         message = await ctx.channel.send(embed=embed)
 
         # Add "hot" reaction
-        await message.add_reaction('🥵')
+        # await message.add_reaction('🥵')
 
         # Add "source" reaction
         await message.add_reaction('🌶')
