@@ -1,4 +1,5 @@
 from config import debug
+from json import load as load_json
 
 
 # Prints if debug is true
@@ -8,10 +9,9 @@ def debug_print(text):
 
 
 # Hardcoded max_count, would probably need to use a fetch
-list_of_domains = [{'name': 'rule34.xxx', 'short': 'xxx', 'max_count': 3659351},
-                   {'name': 'rule34.paheal.net',
-                       'short': 'paheal', 'max_count': 3532797},
-                   {'name': 'danbooru.donmai.us',
-                       'short': 'danbooru', 'max_count': 3806415},
-                   {'name': 'gelbooru.com', 'short': 'gelbooru', 'max_count': 5164061},
-                   {'name': 'e621.net', 'short': 'e621', 'max_count': 2168016}]
+with open('assets/lib/rule-34-shared-resources/domains.json', 'r') as json_data:
+    list_of_domains = load_json(json_data)
+
+    # Delete domains that we are not gonna use
+    list_of_domains[:] = [
+        d for d in list_of_domains if d.get('short') != 'loli']
