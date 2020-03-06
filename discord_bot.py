@@ -17,7 +17,7 @@ bot = commands.Bot(command_prefix=r34_bot_prefix,
 # -------- Helper functions -------- #
 
 
-async def domain_selector(channel, domain=None, selector='short'):
+async def random_domain(channel, domain=None, selector='short'):
     # Find if its a suitable domain
     if domain:
         domain_dic = [
@@ -165,7 +165,7 @@ async def on_reaction_add(reaction, user):
         _domain_random_id = reaction.message.embeds[0].colour.value
 
         # Learn short from name
-        _domain_short = await domain_selector(reaction.message.channel, _domain_name, 'name')
+        _domain_short = await random_domain(reaction.message.channel, _domain_name, 'name')
 
         # Fetch data
         api_request = await fetch_api(reaction.message.channel, _domain_short[1], _domain_random_id)
@@ -188,7 +188,7 @@ async def on_reaction_add(reaction, user):
     elif str(reaction.emoji) == '➕':
 
         # Select domain
-        domain_name, domain_short, domain_random_id = await domain_selector(reaction.message.channel)
+        domain_name, domain_short, domain_random_id = await random_domain(reaction.message.channel)
 
         # Fetch data
         api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
@@ -237,7 +237,7 @@ async def random(ctx, domain=None):
     invoqued_by(ctx.author.name, 'Random')
 
     # Select domain
-    domain_name, domain_short, domain_random_id = await domain_selector(ctx.channel, domain)
+    domain_name, domain_short, domain_random_id = await random_domain(ctx.channel, domain)
 
     # Fetch data
     api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
