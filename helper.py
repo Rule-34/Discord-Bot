@@ -21,3 +21,5 @@ def debug_print(text):
         print('\n %s' % (text))
 
 
+def invoqued_by(name, command=None):
+    debug_print(f'{command}: invoqued by {name}')

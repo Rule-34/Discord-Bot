@@ -6,7 +6,7 @@ import aiohttp
 import discord
 from discord.ext import commands
 # Own
-from helper import debug_print, list_of_domains
+from helper import list_of_domains, find_domain_by_selector, debug_print, invoqued_by
 from config import discord_token, API_URL, r34_bot_prefix, message_channel_id
 
 # Init
@@ -158,7 +158,7 @@ async def on_reaction_add(reaction, user):
     if not reaction.message.author == bot.user:
         return
 
-    await invoqued_by(user, 'Reaction')
+    invoqued_by(user, 'Reaction')
     # print(f'{reaction} - {user}\n{reaction.message}')
 
     # Show source
@@ -205,7 +205,7 @@ async def on_reaction_add(reaction, user):
 async def say(ctx, arg):
 
     # Debug message
-    await invoqued_by(ctx.author.name, 'Say')
+    invoqued_by(ctx.author.name, 'Say')
 
     await ctx.send(arg)
 
@@ -214,7 +214,7 @@ async def say(ctx, arg):
 async def ping(ctx):
 
     # Debug message
-    await invoqued_by(ctx.author.name, 'Ping')
+    invoqued_by(ctx.author.name, 'Ping')
 
     time1 = time.perf_counter()
 
@@ -235,7 +235,7 @@ async def ping(ctx):
 async def random(ctx, domain=None):
 
     # Debug message
-    await invoqued_by(ctx.author.name, 'Random')
+    invoqued_by(ctx.author.name, 'Random')
 
     # Select domain
     domain_name, domain_short, domain_random_id = await domain_selector(ctx.channel, domain)
