@@ -15,6 +15,16 @@ with open('assets/lib/rule-34-shared-resources/domains.json', 'r') as json_data:
 
 # -------- Helper functions -------- #
 
+# Returns dictionary with the domain
+def find_domain_by_selector(domain, selector='short'):
+    for domain_from_list in list_of_domains:
+        if domain_from_list[selector] == domain:
+            return domain_from_list
+
+    # Return none if nothing is found
+    return None
+
+
 # Prints if debug is true
 def debug_print(text):
     if debug:

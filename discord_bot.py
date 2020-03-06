@@ -20,8 +20,7 @@ bot = commands.Bot(command_prefix=r34_bot_prefix,
 async def random_domain(channel, domain=None, selector='short'):
     # Find if its a suitable domain
     if domain:
-        domain_dic = [
-            domain_from_list for domain_from_list in list_of_domains if domain_from_list[selector] == domain]
+        domain_dic = find_domain_by_selector(domain, selector)
 
         domain_name = domain_dic["name"]
         domain_short = domain_dic["short"]
