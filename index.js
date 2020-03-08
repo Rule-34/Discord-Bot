@@ -1,22 +1,27 @@
-'use strict'
+require('dotenv').config()
 
-const generalConfig = require('./config/config.js'),
+const fs = require('fs'),
   // Packages
   Discord = require('discord.js'),
-  debug = require('debug')('Discord Bot'),
-  // Init
-  client = new Discord.Client()
+  debug = require('debug')('bot:main'),
+  // Own
+  { prefix } = require('./config/config.json')
 
-client.on('ready', () => {
-  debug(`Logged in as ${client.user.tag}!`)
-  debug(process.env.DEBUG)
+// Init
+const client = new Discord.Client()
+client.commands = new Discord.Collection()
+
+const commandFiles = fs
+  .readdirSync('./commands')
+  .filter(file => file.endsWith('.js'))
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`)
+  client.commands.set(command.name, command)
+}
+
+client.once('ready', () => {
+  debug('Ready!')
 })
 
-client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('pong')
-  }
-})
-
-// Start bot
-client.login(generalConfig.token)
+client.login(process.env.BOT_DISCORD_TOKEN)

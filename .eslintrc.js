@@ -6,15 +6,10 @@ module.exports = {
     jest: true,
   },
   parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 9,
-    sourceType: 'module',
+    ecmaVersion: 2019,
   },
   extends: ['eslint:recommended', 'prettier', 'plugin:prettier/recommended'],
   plugins: ['prettier'],
   // add your custom rules here
-  rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-  },
+  rules: {},
 }
