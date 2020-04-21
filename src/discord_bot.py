@@ -1,140 +1,19 @@
 import os
 import time
-from random import choice, randrange
 # Third party
-import aiohttp
 import discord
 from discord.ext import commands
 # Own
-from helper import list_of_domains, find_domain_by_selector, debug_print, invoqued_by
-from config import discord_token, API_URL, r34_bot_prefix
+from helper import debug_print, invoqued_by, random_post_and_send, source_and_send, send_error
+from config import discord_token, r34_bot_prefix, booru_list
+from r34_shared.util.booru_utils import find_boorus_with_value_by_key
 
 # Init
 bot = commands.Bot(command_prefix=r34_bot_prefix,
                    description="Rule 34 Bot - Seeker of sauce")
 
 
-# -------- Helper functions -------- #
-
-
-async def random_domain(channel, domain=None, selector='short'):
-    # Find if its a suitable domain
-    if domain:
-        domain_dic = find_domain_by_selector(domain, selector)
-
-        domain_name = domain_dic["name"]
-        domain_short = domain_dic["short"]
-        domain_random_id = randrange(domain_dic["max_count"])
-
-        if domain_dic:
-            return domain_name, domain_short, domain_random_id
-
-        # If for ends execution empty then send error
-        await send_error(channel, error_data="Not a valid domain")
-
-    # Choose random domain
-    else:
-        domain_dic = choice(list_of_domains)
-        domain_name = domain_dic["name"]
-        domain_short = domain_dic["short"]
-        domain_random_id = randrange(domain_dic["max_count"])
-
-        return domain_name, domain_short, domain_random_id
-
-
-async def fetch_api(channel, domain, id):
-
-    # Craft URL
-    url = f'{API_URL}/{domain}/single-post/?id={id}&corsProxy=false'
-
-    try:
-        # Fetch data and return it
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as request:
-                if request.status == 200:
-                    api_request = await request.json()
-
-                    # Error handling
-                    if not api_request:
-                        raise ConnectionError('No data received')
-
-                    return api_request
-
-                else:
-                    raise ConnectionError('Request status was not correct')
-
-    except Exception as error:
-        print(f'Fetch error:\n{error}')
-
-        await send_error(channel, error_data=f"Could not fetch data\n{error}")
-
-        return None
-
-
-async def send_embed(channel, mention, api_request, domain_name, domain_random_id):
-
-    # Try to use low res image
-    try:
-        image = list(api_request)[0]["low_res_file"]
-
-    except:
-        debug_print('Failed to retrieve low res file')
-        image = list(api_request)[0]["high_res_file"]
-
-    # Test if image is not undefined
-    if not image.startswith('http'):
-        await send_error(channel, error_data=f"Image didn't have a valid url\n{image}")
-
-        return
-
-    # Send message
-    try:
-        # Create embed
-        embed = discord.Embed()
-
-        embed.add_field(
-            name="Mention", value=f"Hentai for {mention}")
-
-        # Set image
-        embed.set_image(url=image)
-
-        # Set domain ID
-        embed.colour = domain_random_id
-
-        # Credit
-        embed.set_footer(text=f'- {domain_name}')
-
-        # Send response
-        message = await channel.send(embed=embed)
-
-        # Add "hot" reaction
-        # await message.add_reaction('🥵')
-
-        # Add "source" reaction
-        await message.add_reaction('🌶')
-
-        # Add "give me more" reaction
-        await message.add_reaction('➕')
-
-    except Exception as error:
-        print(f'Send error:\n{error}\n{embed.image.url, image}')
-
-        await send_error(channel, error_data=f"Could not reply with an image\n{error}")
-
-        return
-
-
-async def send_error(channel, error_title='Error', error_data=None):
-    embed = discord.Embed(title=error_title)
-    embed.add_field(
-        name="Message", value=error_data, inline=False)
-
-    # Send response
-    await channel.send(embed=embed)
-
-
 # -------- BOT EVENTS -------- #
-
 @bot.event
 async def on_ready():
     # Start message
@@ -160,43 +39,30 @@ async def on_reaction_add(reaction, user):
     if str(reaction.emoji) == '🌶':
 
         # Get variables
-        _domain_name = reaction.message.embeds[0].footer.text[2:]
-        _domain_random_id = reaction.message.embeds[0].colour.value
+        booru_name = reaction.message.embeds[0].footer.text[2:]
+        post_id = reaction.message.embeds[0].colour.value
 
         # Learn short from name
-        _domain_short = await random_domain(reaction.message.channel, _domain_name, 'name')
+        booru_short = find_boorus_with_value_by_key(
+            booru_name, "name", booru_list)[0]["short"]
 
-        # Fetch data
-        api_request = await fetch_api(reaction.message.channel, _domain_short[1], _domain_random_id)
-
-        if list(api_request)[0]['source']:
-            _source = list(api_request)[0]['source']
-
-        else:
-            _source = 'No source available, sorry!'
-
-        # Create embed and send it
-        embed = discord.Embed()
-
-        embed.add_field(
-            name="Source", value=_source)
-
-        await reaction.message.channel.send(embed=embed)
+        await source_and_send(reaction.message.channel, booru_short, post_id)
 
     # Show more hentai
     elif str(reaction.emoji) == '➕':
+        sent = False
+        retries = 0
 
-        # Select domain
-        domain_name, domain_short, domain_random_id = await random_domain(reaction.message.channel)
+        while not sent:
 
-        # Fetch data
-        api_request = await fetch_api(reaction.message.channel, domain_short, domain_random_id)
+            debug_print(retries)
 
-        if not api_request:
-            return
+            if retries >= 3:
+                sent = True
 
-        # Send embed
-        await send_embed(reaction.message.channel, user.mention, api_request, domain_name, domain_random_id)
+            sent = await random_post_and_send(reaction.message.channel, user.mention)
+
+            sent += 1
 
 
 @bot.command(brief="Echoes a message")
@@ -229,23 +95,32 @@ async def ping(ctx):
     await ctx.send(embed=embed)
 
 
-@bot.command(aliases=['rand', 'r'], brief="Outputs random hentai from a random domain", description="Outputs random hentai from a domain, random if none selected")
-async def random(ctx, domain=None):
+@bot.command(aliases=['rand', 'r'], brief="Outputs random hentai from a random booru", description="Outputs random hentai from a booru, random if none selected")
+async def random(ctx, score=None, booru=None):
 
     # Debug message
     invoqued_by(ctx.author.name, 'Random')
 
-    # Select domain
-    domain_name, domain_short, domain_random_id = await random_domain(ctx.channel, domain)
+    # Error checking
+    if score:
+        if not score.isdigit():
+            await send_error(ctx.channel, "Thats not a valid post score!")
+            return
 
-    # Fetch data
-    api_request = await fetch_api(ctx.channel, domain_short, domain_random_id)
+    # Init values
+    sent = False
+    retries = 0
 
-    if not api_request:
-        return
+    while not sent:
 
-    # Send embed
-    await send_embed(ctx.channel, ctx.author.mention, api_request, domain_name, domain_random_id)
+        debug_print(retries)
+
+        if retries >= 3:
+            sent = True
+
+        sent = await random_post_and_send(ctx.channel, ctx.author.mention, score, booru)
+
+        sent += 1
 
 
 # -------- BOT INIT -------- #
