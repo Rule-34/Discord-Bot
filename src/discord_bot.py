@@ -7,7 +7,7 @@ import discord
 from discord.ext import commands
 # Own
 from helper import list_of_domains, find_domain_by_selector, debug_print, invoqued_by
-from config import discord_token, API_URL, r34_bot_prefix, message_channel_id
+from config import discord_token, API_URL, r34_bot_prefix
 
 # Init
 bot = commands.Bot(command_prefix=r34_bot_prefix,
