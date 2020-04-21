@@ -1,5 +1,5 @@
 import discord
-from random import choice
+from random import choice, randrange
 from requests import get
 
 from config import debug, API_URL, booru_list, booru_score
@@ -33,7 +33,7 @@ async def random_post_and_send(channel, mention, score=None, booru=None):
         # Get random media from a random booru
         debug_print('Fetching post')
         data = http_get(
-            f"{API_URL}/{random_short}/random-post?score={score}")
+            f"{API_URL}/{random_short}/random-post?score={score}&cacheBreaker={randrange(99999999999)}")  # TEMPORAL CACHE BREAKER
 
         data = data.json()
 
