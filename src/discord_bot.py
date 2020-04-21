@@ -115,12 +115,14 @@ async def random(ctx, score=None, booru=None):
 
         debug_print(retries)
 
-        if retries >= 3:
+        if retries > 2:
             sent = True
+            await send_error(ctx.channel, f"Tried {retries} times but I couldn't find anything")
+            return
+
+        retries += 1
 
         sent = await random_post_and_send(ctx.channel, ctx.author.mention, score, booru)
-
-        sent += 1
 
 
 # -------- BOT INIT -------- #
